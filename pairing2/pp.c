@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
             if(partners[i] == 0)
                 remaining += 1;
             else if(partners[i] == procid)
-                partners[procid] = partners[a];
+                partners[procid] = partners[i];
         }
 
         if(remaining == 0){
@@ -57,11 +57,11 @@ int main(int argc, char **argv) {
                 }
             }
             int partner = rand() % remaining, sendto = partner;
-            partners[procid] = newpreference[partner];
+            partners[procid] = preference[partner];
             while(sendto == partner){
                 sendto = rand() % remaining;
             }
-            sendto = newpreference[sendto];
+            sendto = preference[sendto];
             MPI_Send(partners, numprocs, MPI_INT, sendto, 0,MPI_COMM_WORLD);
         }     
     }
