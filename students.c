@@ -64,8 +64,7 @@ int main(int argc, char **argv) {
             else{
                 int k = 1;
                 while((k <= numprocs-1)){
-                    if(pairing[1] != obtained[k]){
-                        printf("Yo, %d, %d",pairing[1],obtained[k]);
+                    if(pairing[0] != obtained[k]){
                         pairing[1]=obtained[k];
                         break;
                     }
