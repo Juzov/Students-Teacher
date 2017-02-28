@@ -39,9 +39,12 @@ int main(int argc, char **argv) {
         printf("Sendamount %d\n", sendamount);
         //
         //1 to n-1
-        //0 1 2 3 4 5 -> 2345
+        //num procs = 5 -> children = 4 
+        //1 2 3 4
+        //num procs = 6 -> children = 5 
+        //1 2 3 4 5 -> sendamount = numprocs - 1 / 2 , 5 / 2 + 1
 
-        if((numprocs - 2) % 2 == 0)
+        if((numprocs - 1) % 2 == 0)
             sendamount += 1;
        
         for(int i = 1; i <= sendamount; i++){
