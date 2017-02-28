@@ -51,7 +51,8 @@ int main(int argc, char **argv) {
         }
         else{
             printf("HELLO");
-            int preference[remaining], ncount;
+            
+            int preference[remaining], ncount = 0;
             for(int i = 1; i < numprocs; i++){
                 if(partners[i] == 0){
                     preference[ncount] = partners[i];
