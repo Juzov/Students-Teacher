@@ -53,14 +53,15 @@ int main(int argc, char **argv) {
 
             int pairing[2];
             pairing[0]=obtained[0];
-
             
-            if(i == sendamount && i % 2 != 0)
+            if(i == sendamount && i % 2 != 0){
                 pairing[1]=0;
+                printf("Hello %d\n",i);
+            }
             else
                 pairing[1]=obtained[1];
     
-            printf("Pair %d: %d, %d",i,pairing[0],pairing[1]);
+            printf("Pair %d: %d, %d\n",i,pairing[0],pairing[1]);
 
             for(int j = 1; j < numprocs-1; j++){
                 MPI_Send(pairing, 2, MPI_INT, j, i + 1, MPI_COMM_WORLD);
@@ -92,9 +93,6 @@ int main(int argc, char **argv) {
             i+=1;
         }
         printf("\n");
-
-        int check1 = -1;
-        int check2 = -2;
         
         int p = 0;
         for(int c = 1; c < numprocs - 1; c++){      
