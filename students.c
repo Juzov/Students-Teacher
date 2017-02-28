@@ -46,18 +46,19 @@ int main(int argc, char **argv) {
         //obtained from Recieved
         int obtained[numprocs-1];
        
-        for(int i = 1; i <= sendamount; i++){
+        for(int i = 0; i < sendamount; i++){
             //Recieve priority from all children
-            for(int j = 1; j < numprocs - 1; j++){
+            //Tags: 0->1->2...
+            for(int j = 0; j < numprocs - 1; j++){
                 MPI_Recv(&partner, 1, MPI_INT, MPI_ANY_SOURCE, i, MPI_COMM_WORLD, &status);
-                obtained[j-1]=partner;
+                obtained[j]=partner;
             }
             printf("Recieved Done %d\n",i);
 
             int pairing[2];
             pairing[0]=obtained[0];
             
-            if((i == sendamount) && (i % 2 != 0)){
+            if((i == sendamount - 1) && (i % 2 != 0)){
                 pairing[1]=0;
                 printf("Hello %d,%d\n",i,sendamount);
             }
@@ -98,7 +99,8 @@ int main(int argc, char **argv) {
         printf("\n");
         
         int p = 0;
-        for(int c = 1; c <= sendamount; c++){      
+        //0 1 2 3
+        for(int c = 0; c < sendamount; c++){      
             //check if the preferred has been taken before?
             while(preference[p] == 0)
                 p+=1;
@@ -106,6 +108,7 @@ int main(int argc, char **argv) {
             printf("id %d, preference %d\n", procid, preference[p]);
 
             //send the preferred
+            //send 1 recieve
 
             MPI_Send(&preference[p], 1, MPI_INT, 0, c, MPI_COMM_WORLD);
             MPI_Recv(pairing, 2, MPI_INT, 0, c + 1, MPI_COMM_WORLD, &status);
