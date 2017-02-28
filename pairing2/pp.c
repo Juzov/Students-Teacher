@@ -50,6 +50,7 @@ int main(int argc, char **argv) {
             MPI_Send(partners, numprocs, MPI_INT, 0, 0,MPI_COMM_WORLD);
         }
         else{
+            printf("HELLO");
             int preference[remaining], ncount;
             for(int i = 1; i < numprocs; i++){
                 if(partners[i] == 0){
