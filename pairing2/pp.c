@@ -54,7 +54,8 @@ int main(int argc, char **argv) {
             int preference[remaining], ncount;
             for(int i = 1; i < numprocs; i++){
                 if(partners[i] == 0){
-                    preference[ncount++] = partners[i];
+                    preference[ncount] = partners[i];
+                    ncount += 1;
                 }
             }
             int partner = rand() % remaining, sendto = partner;
@@ -63,6 +64,7 @@ int main(int argc, char **argv) {
                 sendto = rand() % remaining;
             }
             sendto = preference[sendto];
+            printf("partner %d, sendto %d",partners[procid],sendto);
             MPI_Send(partners, numprocs, MPI_INT, sendto, 0,MPI_COMM_WORLD);
         }     
     }
