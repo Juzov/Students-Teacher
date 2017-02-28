@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
         //obtained from Recieved
         int obtained[numprocs-1];
        
-        for(int i = 0; i < sendamount; i++){
+        for(int i = 0; i < sendamount - 1; i++){
             //Recieve priority from all children
             //Tags: 0->1->2...
             for(int j = 0; j < numprocs - 1; j++){
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
         
         int p = 0;
         //0 1 2 3
-        for(int c = 0; c < sendamount; c++){      
+        for(int c = 0; c < sendamount - 1; c++){      
             //check if the preferred has been taken before?
             while(preference[p] == 0)
                 p+=1;
