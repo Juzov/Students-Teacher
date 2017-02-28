@@ -26,6 +26,7 @@ int main(int argc, char **argv) {
     
     srand((unsigned)time(NULL)*procid*numprocs);
     int pairing[2];
+    int partners[numprocs - 1];
     //How many time are we supposed to send
     int sendamount = (numprocs - 1) / 2;
     
@@ -60,8 +61,16 @@ int main(int argc, char **argv) {
                 pairing[1]=0;
                 printf("Hello %d,%d\n",i,sendamount);
             }
-            else
-                pairing[1]=obtained[1];
+            else{
+                int k = 1;
+                while((k <= numprocs-1)){
+                    if(pairing[1] != obtained[k]){
+                        pairing[1]=obtained[k];
+                        break;
+                    }
+                    k+=1;
+                }
+            }
     
             printf("Pair %d: %d, %d\n",i,pairing[0],pairing[1]);
 
