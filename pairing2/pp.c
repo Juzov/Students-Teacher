@@ -13,8 +13,6 @@ int main(int argc, char **argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &procid);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
 
-    int 
-
     time_t t;
     int partners[numprocs], partner = -1, variables = numprocs - 1;
 
