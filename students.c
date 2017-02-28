@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
         printf("\n");
         
         int p = 0;
-        for(int c = 1; c < numprocs - 1; c++){      
+        for(int c = 1; c <= sendamount; c++){      
             //check if the preferred has been taken before?
             while(preference[p] == 0)
                 p+=1;
