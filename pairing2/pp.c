@@ -18,10 +18,11 @@ int main(int argc, char **argv) {
 
     srand((unsigned)time(NULL)*procid*numprocs*100);
 
+
     if (procid == 0) {
         
-        for(int i = 0; i<numprocs; i++)
-            partners[i]=0;
+        for(int i = 0; i < numprocs; i++)
+            partners[i] = 0;
 
         int randomchoice = (rand() % (numprocs - 1) + 1);
         printf("Teacher says: Student %d start!\n",randomchoice);
@@ -62,6 +63,7 @@ int main(int argc, char **argv) {
             printf("HELLO");
             int partner = rand() % remaining, sendto;
             sendto = partner;
+            printf("Remaining %d %d",remaining,ncount);
             printf("partner %d, sendto %d",partner,sendto);
             partners[procid] = preference[partner];
             while(sendto == partner){
