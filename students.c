@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
             MPI_Recv(pairing, 2, MPI_INT, 0, c + 1, MPI_COMM_WORLD, &status);
 
             for(int m = 0; m < 2; m++){
-                for(int n = 0; n < numprocs - 1; n++){
+                for(int n = 0; n < numprocs - 2; n++){
                     if(pairing[m] == preference[n])
                         preference[n] = 0;
                 }
