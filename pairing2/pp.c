@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     time_t t;
     int partners[numprocs], partner = -1, variables = numprocs - 1;
 
-    srand((unsigned)time(NULL)*procid*numprocs*100);
+    srand(time(NULL) + procid);
 
 
     if (procid == 0) {
