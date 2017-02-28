@@ -63,14 +63,14 @@ int main(int argc, char **argv) {
             printf("HELLO");
             int partner = rand() % remaining, sendto;
             sendto = partner;
-            printf("Remaining %d %d",remaining,ncount);
-            printf("partner %d, sendto %d",partner,sendto);
+            printf("Remaining %d %d\n",remaining,ncount);
+            printf("partner %d, sendto %d\n",partner,sendto);
             while(partner == sendto){
                 sendto = rand() % remaining;
             }
             partners[procid] = preference[partner];
             sendto = preference[sendto];
-            printf("partner %d, sendto %d",partners[procid],sendto);
+            printf("partner %d, sendto %d\n",partners[procid],sendto);
             MPI_Send(partners, numprocs, MPI_INT, sendto, 0,MPI_COMM_WORLD);
         }     
     }
