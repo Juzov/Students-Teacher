@@ -36,6 +36,7 @@ int main(int argc, char **argv) {
 
         //How many time are we supposed to send
         int sendamount = (numprocs - 2) / 2;
+        printf("Sendamount %d\n", sendamount);
         //
         //1 to n-1
         //0 1 2 3 4 5 -> 2345
