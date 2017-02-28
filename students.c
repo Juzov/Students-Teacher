@@ -73,6 +73,8 @@ int main(int argc, char **argv) {
                     k+=1;
                 }
             }
+
+            //set into partners
     
             printf("Pair %d: %d, %d\n",i,pairing[0],pairing[1]);
             if(i == sendamount -1)
