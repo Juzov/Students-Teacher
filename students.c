@@ -26,6 +26,18 @@ int main(int argc, char **argv) {
     
     srand((unsigned)time(NULL)*procid*numprocs);
     int pairing[2];
+    //How many time are we supposed to send
+    int sendamount = (numprocs - 1) / 2;
+    printf("Sendamount %d\n", sendamount);
+    //
+    //1 to n-1
+    //num procs = 5 -> children = 4 
+    //1 2 3 4
+    //num procs = 6 -> children = 5 
+    //1 2 3 4 5 -> sendamount = numprocs - 1 / 2 , 5 / 2 + 1
+
+    if((numprocs - 1) % 2 == 0)
+        sendamount += 1;
 
     if (procid == 0) {
         //actual partners
@@ -33,19 +45,6 @@ int main(int argc, char **argv) {
 
         //obtained from Recieved
         int obtained[numprocs-1];
-
-        //How many time are we supposed to send
-        int sendamount = (numprocs - 1) / 2;
-        printf("Sendamount %d\n", sendamount);
-        //
-        //1 to n-1
-        //num procs = 5 -> children = 4 
-        //1 2 3 4
-        //num procs = 6 -> children = 5 
-        //1 2 3 4 5 -> sendamount = numprocs - 1 / 2 , 5 / 2 + 1
-
-        if((numprocs - 1) % 2 == 0)
-            sendamount += 1;
        
         for(int i = 1; i <= sendamount; i++){
             //Recieve priority from all children
