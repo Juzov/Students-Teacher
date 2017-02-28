@@ -60,7 +60,9 @@ int main(int argc, char **argv) {
                 }
             }
             printf("HELLO");
-            int partner = rand() % remaining, sendto = partner;
+            int partner = rand() % remaining, sendto;
+            sendto = partner;
+            printf("partner %d, sendto %d",partner,sendto);
             partners[procid] = preference[partner];
             while(sendto == partner){
                 sendto = rand() % remaining;
