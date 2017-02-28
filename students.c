@@ -54,9 +54,9 @@ int main(int argc, char **argv) {
             int pairing[2];
             pairing[0]=obtained[0];
             
-            if(i == sendamount && i % 2 != 0){
+            if((i == sendamount) && (i % 2 != 0)){
                 pairing[1]=0;
-                printf("Hello %d\n",i);
+                printf("Hello %d,%d\n",i,sendamount);
             }
             else
                 pairing[1]=obtained[1];
