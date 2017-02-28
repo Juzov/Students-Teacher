@@ -50,22 +50,20 @@ int main(int argc, char **argv) {
         for(int i = 0; i < sendamount; i++){
             //Recieve priority from all children
             //Tags: 0->1->2...
-
+            for(int j = 0; j < numprocs - 1; j++){
+                MPI_Recv(&partner, 1, MPI_INT, MPI_ANY_SOURCE, i, MPI_COMM_WORLD, &status);
+                obtained[j]=partner;
+            }
             printf("Recieved Done %d\n",i);
 
             int pairing[2];
-            pairing[0] = obtained[0];
+            pairing[0]=obtained[0];
             
-            if((i == sendamount - 1) && ((numprocs - 1) % 2 != 0)){
-                MPI_Recv(&partner, 1, MPI_INT, MPI_ANY_SOURCE, i, MPI_COMM_WORLD, &status);
-                partners[pairing[0]]=pairing[1];
-                break;
+            if((i == sendamount - 1) && (i % 2 != 0)){
+                pairing[1]=0;
+                printf("Hello %d,%d\n",i,sendamount);
             }
             else{
-                for(int j = 0; j < numprocs - 1; j++){
-                    MPI_Recv(&partner, 1, MPI_INT, MPI_ANY_SOURCE, i, MPI_COMM_WORLD, &status);
-                    obtained[j]=partner;
-                }
                 int k = 1;
                 while((k <= numprocs-1)){
                     if(pairing[0] != obtained[k]){
@@ -74,19 +72,16 @@ int main(int argc, char **argv) {
                     }
                     k+=1;
                 }
-                partners[pairing[0]]=pairing[1];
-                partners[pairing[1]]=pairing[0];
-                printf("Pair %d: %d, %d\n",i,pairing[0],pairing[1]);
-
-                for(int j = 1; j < numprocs; j++){
-                    MPI_Send(pairing, 2, MPI_INT, j, i + 1, MPI_COMM_WORLD);
-                }
             }
-            
 
             //set into partners
     
+            printf("Pair %d: %d, %d\n",i,pairing[0],pairing[1]);
             
+
+            for(int j = 1; j < numprocs; j++){
+                MPI_Send(pairing, 2, MPI_INT, j, i + 1, MPI_COMM_WORLD);
+            }
         }
 
     }
@@ -122,26 +117,25 @@ int main(int argc, char **argv) {
         // Recieve sendamount -1 pp pp / pp pp
         for(int c = 0; c < sendamount; c++){      
             //check if the preferred has been taken before?
+            while(preference[p] == 0)
+                p+=1;
+            
+            printf("id %d, preference %d\n", procid, preference[p]);
+
             //send the preferred
             //send 1 recieve
+
             
-            if((i == sendamount - 1) && ((numprocs - 1) % 2 != 0)){
-                MPI_Send(procid, 1, MPI_INT, 0, c, MPI_COMM_WORLD);
-                printf("Hello %d,%d\n",i,sendamount);
-                break;
-            }
-            else{
-                while(preference[p] == 0){
-                    p+=1;
-                }
-                printf("id %d, preference %d\n", procid, preference[p]);                
-                MPI_Send(&preference[p], 1, MPI_INT, 0, c, MPI_COMM_WORLD);
-                MPI_Recv(pairing, 2, MPI_INT, 0, c + 1, MPI_COMM_WORLD, &status);
-                for(int m = 0; m < 2; m++){
-                    for(int n = 0; n < numprocs - 2; n++){
-                        if(pairing[m] == preference[n])
-                            preference[n] = 0;
-                    }
+
+            MPI_Send(&preference[p], 1, MPI_INT, 0, c, MPI_COMM_WORLD);
+            //if((i == sendamount - 1) && (i % 2 == 0))
+            //    break;
+            MPI_Recv(pairing, 2, MPI_INT, 0, c + 1, MPI_COMM_WORLD, &status);
+
+            for(int m = 0; m < 2; m++){
+                for(int n = 0; n < numprocs - 2; n++){
+                    if(pairing[m] == preference[n])
+                        preference[n] = 0;
                 }
             }
         }
@@ -152,8 +146,4 @@ int main(int argc, char **argv) {
     }
 
     MPI_Finalize();
-
-    for(int i = 0; i < numprocs - 1; i++ ){
-        printf("%d partner is %d\n",i, partners[i]);
-    }
 }
