@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
     int pairing[2];
     //How many time are we supposed to send
     int sendamount = (numprocs - 1) / 2;
-    printf("Sendamount %d\n", sendamount);
+    
     //
     //1 to n-1
     //num procs = 5 -> children = 4 
@@ -40,9 +40,7 @@ int main(int argc, char **argv) {
         sendamount += 1;
 
     if (procid == 0) {
-        //actual partners
-        int partners[numprocs-1];
-
+        printf("Sendamount %d\n", sendamount);
         //obtained from Recieved
         int obtained[numprocs-1];
        
@@ -67,7 +65,7 @@ int main(int argc, char **argv) {
     
             printf("Pair %d: %d, %d\n",i,pairing[0],pairing[1]);
 
-            for(int j = 1; j < numprocs-1; j++){
+            for(int j = 1; j < numprocs; j++){
                 MPI_Send(pairing, 2, MPI_INT, j, i + 1, MPI_COMM_WORLD);
             }
         }
@@ -114,7 +112,7 @@ int main(int argc, char **argv) {
             MPI_Recv(pairing, 2, MPI_INT, 0, c + 1, MPI_COMM_WORLD, &status);
 
             for(int m = 0; m < 2; m++){
-                for(int n = 0; n < numprocs - 2; n++){
+                for(int n = 0; n < numprocs - 1; n++){
                     if(pairing[m] == preference[n])
                         preference[n] = 0;
                 }
