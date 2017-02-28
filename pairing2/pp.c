@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     time_t t;
     int partners[numprocs], partner = -1, variables = numprocs - 1;
 
-    srand((unsigned)time(NULL)+procid*numprocs);
+    srand((unsigned)time(NULL)*procid*numprocs*100);
 
     if (procid == 0) {
         
@@ -58,6 +58,7 @@ int main(int argc, char **argv) {
                     ncount += 1;
                 }
             }
+            printf("HELLO");
             int partner = rand() % remaining, sendto = partner;
             partners[procid] = preference[partner];
             while(sendto == partner){
