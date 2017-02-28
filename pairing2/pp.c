@@ -4,15 +4,6 @@
 #include <stdio.h> 
 #include <string.h> 
 #include "mpi.h"
-#include <sys/time.h>
-
-int getRandomValue()
-{
-    struct timeval t1;
-    gettimeofday(&t1, NULL);
-    srand(t1.tv_usec * t1.tv_sec);
-    return rand();
-}
 
 int main(int argc, char **argv) {
     int procid, numprocs;
@@ -22,7 +13,7 @@ int main(int argc, char **argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &procid);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
 
-   
+    time_t t;
     int partners[numprocs], partner = -1, variables = numprocs - 1;
 
     srand(time(NULL) + procid);
@@ -33,7 +24,7 @@ int main(int argc, char **argv) {
         for(int i = 0; i < numprocs; i++)
             partners[i] = 0;
 
-        int randomchoice = (getRandomValue() % (numprocs - 1) + 1);
+        int randomchoice = (rand() % (numprocs - 1) + 1);
         printf("Teacher says: Student %d start!\n",randomchoice);
 
         MPI_Send(partners, numprocs, MPI_INT, randomchoice, 0,MPI_COMM_WORLD);
@@ -65,19 +56,19 @@ int main(int argc, char **argv) {
             int preference[remaining], ncount = 0;
             for(int i = 1; i < numprocs; i++){
                 if(partners[i] == 0){
-                    preference[ncount] = partners[i];
+                    preference[ncount] = i;
                     ncount += 1;
                 }
             }
             printf("HELLO");
-            int partner = getRandomValue() % remaining, sendto;
+            int partner = rand() % remaining, sendto;
             sendto = partner;
             printf("Remaining %d %d",remaining,ncount);
             printf("partner %d, sendto %d",partner,sendto);
-            partners[procid] = preference[partner];
-            while(sendto == partner){
-                sendto = getRandomValue() % remaining;
+            while(partner == sendto){
+                sendto = rand() % remaining;
             }
+            partners[procid] = preference[partner];
             sendto = preference[sendto];
             printf("partner %d, sendto %d",partners[procid],sendto);
             MPI_Send(partners, numprocs, MPI_INT, sendto, 0,MPI_COMM_WORLD);
