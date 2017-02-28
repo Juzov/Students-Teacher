@@ -126,7 +126,7 @@ int main(int argc, char **argv) {
             //send 1 recieve
             
             if((i == sendamount - 1) && ((numprocs - 1) % 2 != 0)){
-                MPI_Send(&procid, 1, MPI_INT, 0, c, MPI_COMM_WORLD);
+                MPI_Send(procid, 1, MPI_INT, 0, c, MPI_COMM_WORLD);
                 printf("Hello %d,%d\n",i,sendamount);
                 break;
             }
