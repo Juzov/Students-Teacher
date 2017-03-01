@@ -5,14 +5,6 @@
 #include <string.h> 
 #include "mpi.h" 
 
-
-#include<unistd.h>
-#include<time.h>
-#include <stdlib.h> 
-#include <stdio.h> 
-#include <string.h> 
-#include "mpi.h"
-
 int main(int argc, char **argv) {
     int procid, numprocs;
     
@@ -37,7 +29,7 @@ int main(int argc, char **argv) {
     //num procs = 6 -> children = 5 
     //1 2 3 4 5 -> sendamount = numprocs - 1 / 2 , 5 / 2 + 1
 
-    if((numprocs - 1) % 2 != 0)
+    if((numprocs - 1) % 2 == 0)
         sendamount += 1;
 
     if (procid == 0) {
@@ -45,9 +37,7 @@ int main(int argc, char **argv) {
         //obtained from Recieved
         int obtained[numprocs-1];
        
-       //Recieve  sendamount (pp) (pp) p / (pp) (pp)
-       // Send sendamount -1 p p / p p
-        for(int i = 0; i < sendamount; i++){
+        for(int i = 0; i < sendamount - 1; i++){
             //Recieve priority from all children
             //Tags: 0->1->2...
             for(int j = 0; j < numprocs - 1; j++){
@@ -73,11 +63,8 @@ int main(int argc, char **argv) {
                     k+=1;
                 }
             }
-
-            //set into partners
     
             printf("Pair %d: %d, %d\n",i,pairing[0],pairing[1]);
-            
 
             for(int j = 1; j < numprocs; j++){
                 MPI_Send(pairing, 2, MPI_INT, j, i + 1, MPI_COMM_WORLD);
@@ -112,10 +99,7 @@ int main(int argc, char **argv) {
         
         int p = 0;
         //0 1 2 3
-
-        //Send  sendamount p p p p / p p p p p
-        // Recieve sendamount -1 pp pp / pp pp
-        for(int c = 0; c < sendamount; c++){      
+        for(int c = 0; c < sendamount - 1; c++){      
             //check if the preferred has been taken before?
             while(preference[p] == 0)
                 p+=1;
@@ -125,11 +109,7 @@ int main(int argc, char **argv) {
             //send the preferred
             //send 1 recieve
 
-            
-
             MPI_Send(&preference[p], 1, MPI_INT, 0, c, MPI_COMM_WORLD);
-            //if((i == sendamount - 1) && (i % 2 == 0))
-            //    break;
             MPI_Recv(pairing, 2, MPI_INT, 0, c + 1, MPI_COMM_WORLD, &status);
 
             for(int m = 0; m < 2; m++){

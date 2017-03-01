@@ -29,51 +29,84 @@ int main(int argc, char **argv) {
 
         MPI_Send(partners, numprocs, MPI_INT, randomchoice, 0,MPI_COMM_WORLD);
         MPI_Recv(partners, numprocs, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
-  
+        printf("YO\n");
+        for(int i = 0; i < numprocs; i++){
+            printf("partners[%d] %d\n",i, partners[i]);
+        }
+        printf("\n");
+        
     }
     else {
         MPI_Recv(partners, numprocs, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
 
         printf("I got it %d\n",procid);
         int remaining = 0;
+        int myself = 0;
+
+        //Check how many remains
+        //with yourself
+        //if you are already set, set yourself to partner
+        //if remaining == 1 -> set yourself to yourself
+        
+        //2 1 0 5 4 0
+        printf("partners: ");
         for(int i = 1; i < numprocs; i++){
-            if(partners[i] == 0)
-                remaining += 1;
+            printf("[%d]:%d, ",i,partners[i]);
+            if(procid == i){
+                if(partners[procid] == 0){
+                    printf("YO [%d]:%d, ",i,partners[i]);
+                    myself += 1;
+                }
+                continue;
+            }
             else if(partners[i] == procid)
-                partners[procid] = partners[i];
+                partners[procid] = i;
+            else if(partners[i] == 0)
+                remaining += 1;
         }
+        printf("\n");
 
         if(remaining == 0){
-            MPI_Send(partners, numprocs, MPI_INT, 0, 0,MPI_COMM_WORLD);
-        }
-        else if(remaining == 1){
-            partners[procid] = procid;
+            if(myself == 1)
+                partners[procid] = procid;
             MPI_Send(partners, numprocs, MPI_INT, 0, 0,MPI_COMM_WORLD);
         }
         else{
-            printf("HELLO");
-            
             int preference[remaining], ncount = 0;
+
             for(int i = 1; i < numprocs; i++){
-                if(partners[i] == 0){
+                if(i == procid){
+                    continue;
+                }
+                else if(partners[i] == 0){
                     preference[ncount] = i;
                     ncount += 1;
                 }
             }
-            printf("HELLO");
-            int partner = rand() % remaining, sendto;
-            sendto = partner;
-            printf("Remaining %d %d\n",remaining,ncount);
-            printf("partner %d, sendto %d\n",partner,sendto);
-            while(partner == sendto){
-                sendto = rand() % remaining;
+
+            for(int i = 0 ; i < remaining; i++){
+                printf("preference[%d]:%d, ",i,preference[i]);
             }
-            partners[procid] = preference[partner];
+            int sendto = rand() % remaining;
+            
+            printf("\nRemaining %d %d\n",remaining,ncount);
+
+            if(myself == 1){
+                int partner = sendto;
+                while((partner == sendto) ){
+                    sendto = rand() % remaining;
+                }
+                partners[procid] = preference[partner];
+            }
+            printf("HELLO \n");
+            
             sendto = preference[sendto];
             printf("partner %d, sendto %d\n",partners[procid],sendto);
             MPI_Send(partners, numprocs, MPI_INT, sendto, 0,MPI_COMM_WORLD);
         }     
     }
+
+    
 
     MPI_Finalize();
 }
