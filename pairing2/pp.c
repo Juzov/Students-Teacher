@@ -51,24 +51,25 @@ int main(int argc, char **argv) {
         //2 1 0 5 4 0
         printf("partners: ");
         for(int i = 1; i < numprocs; i++){
-            printf("[%d]:%d, ",i,partners[i]);
             if(procid == i){
-                if(partners[procid] == 0){
-                    printf("YO [%d]:%d, ",i,partners[i]);
+                printf("[%d]:%d, ",i,partners[i]);
+                if(partners[i] == 0)
                     myself += 1;
-                }
                 continue;
             }
-            else if(partners[i] == procid)
+            else if(partners[i] == procid){
                 partners[procid] = i;
+            }
             else if(partners[i] == 0)
                 remaining += 1;
+            printf("[%d]:%d, ",i,partners[i]);
         }
         printf("\n");
 
         if(remaining == 0){
             if(myself == 1)
                 partners[procid] = procid;
+            printf("I AM THE LAST \n");
             MPI_Send(partners, numprocs, MPI_INT, 0, 0,MPI_COMM_WORLD);
         }
         else{
@@ -87,21 +88,26 @@ int main(int argc, char **argv) {
             for(int i = 0 ; i < remaining; i++){
                 printf("preference[%d]:%d, ",i,preference[i]);
             }
-            int sendto = rand() % remaining;
-            
+            int sendto;
             printf("\nRemaining %d %d\n",remaining,ncount);
-
-            if(myself == 1){
-                int partner = sendto;
-                while((partner == sendto) ){
-                    sendto = rand() % remaining;
-                }
-                partners[procid] = preference[partner];
-            }
-            printf("HELLO \n");
             
-            sendto = preference[sendto];
-            printf("partner %d, sendto %d\n",partners[procid],sendto);
+
+                if(partners[procid] == 0){
+                    int partner = rand() % remaining;
+                    partners[procid] = preference[partner];
+                    sendto = preference[partner];
+                }
+                else{
+                    sendto = rand() % remaining;
+                    sendto = preference[sendto];
+                }
+
+                if(remaining == 1)
+                sendto = preference[0];
+                printf("partner %d, sendto %d\n",partners[procid],sendto);
+
+            
+            
             MPI_Send(partners, numprocs, MPI_INT, sendto, 0,MPI_COMM_WORLD);
         }     
     }
