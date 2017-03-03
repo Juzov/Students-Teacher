@@ -60,7 +60,8 @@ int main(int argc, char **argv) {
             
             for(int j = 0; j < rem; j++){
                 MPI_Recv(pairing, 2, MPI_INT, MPI_ANY_SOURCE, sent, MPI_COMM_WORLD, &status);
-                obtained[j] = pairing;
+                obtained[j][0] = pairing[0];
+                obtained[j][1] = pairing[1];
             }
 
             int oldrem = rem;
