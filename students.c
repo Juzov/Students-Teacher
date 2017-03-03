@@ -105,11 +105,11 @@ int main(int argc, char **argv) {
         //0 1 2 3
         int rec = 0;
         while(partners[procid] == 0){      
-            
+            p = 0;
             for(int m = 1; m < numprocs; m++){
                 if(partners[m] == 0 && procid != m){
                     preference[p] == partners[m];
-                    p++;
+                    p += 1;
                 }
             }
             
@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
             MPI_Recv(partners, numprocs, MPI_INT, 0, rec + 1, MPI_COMM_WORLD, &status);
 
             rec += 1;
-            p = 0;
+            
         }
     }
 
