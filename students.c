@@ -19,6 +19,9 @@ int main(int argc, char **argv) {
     srand((unsigned)time(NULL)*procid*numprocs);
     int pairing[2];
     int partners[numprocs];
+    for(int i = 0; i < numprocs; i++){
+        partners[i] = 0
+    }
     //How many time are we supposed to send
     int sendamount = (numprocs - 1 / 4);
     if(numprocs - 1 % 4 != 0)
