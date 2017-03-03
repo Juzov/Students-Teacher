@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
             
             for(int j = 0; j < rem; j++){
                 MPI_Recv(pairing, 2, MPI_INT, MPI_ANY_SOURCE, sent, MPI_COMM_WORLD, &status);
-                obtained[j]=pairing;
+                obtained[j] = pairing;
             }
 
             int oldrem = rem;
@@ -89,7 +89,6 @@ int main(int argc, char **argv) {
             int t = j;
             for(int j = 0; j < oldrem; j++)
                 MPI_Send(partners, numprocs, MPI_INT, obtained[j][0], sent + 1, MPI_COMM_WORLD);
-            }
             sent += 1;
         }
 
