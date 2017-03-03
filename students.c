@@ -86,8 +86,9 @@ int main(int argc, char **argv) {
                 rem == 0;
             }
 
-            for(int i = 0 ; i < rem; i++){
-                MPI_Send(partners, numprocs, MPI_INT, MPI_ANY_SOURCE, sent + 1, MPI_COMM_WORLD);
+            int t = j;
+            for(int j = 0; j < oldrem; j++)
+                MPI_Send(partners, numprocs, MPI_INT, obtained[j][0], sent + 1, MPI_COMM_WORLD);
             }
             sent += 1;
         }
@@ -100,6 +101,7 @@ int main(int argc, char **argv) {
         
         int p = 0;
         //0 1 2 3
+        int rec = 0;
         while(partners[procid] == 0){      
             
             for(int m = 1; m < numprocs; m++){
@@ -116,9 +118,10 @@ int main(int argc, char **argv) {
             if(p == 0)
                 pairing[1]=procid;
 
-            MPI_Send(pairing, 2, MPI_INT, 0, i, MPI_COMM_WORLD);
-            MPI_Recv(partners, numprocs, MPI_INT, 0, i + 1, MPI_COMM_WORLD, &status);
+            MPI_Send(pairing, 2, MPI_INT, 0, rec, MPI_COMM_WORLD);
+            MPI_Recv(partners, numprocs, MPI_INT, 0, rec + 1, MPI_COMM_WORLD, &status);
 
+            rec += 1;
             p = 0;
         }
     }
