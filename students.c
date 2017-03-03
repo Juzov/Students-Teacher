@@ -114,6 +114,7 @@ int main(int argc, char **argv) {
             }
             
             int want = preference[rand() % p];
+            printf("p %d, want %d\n", procid, want);
 
             pairing[0]=procid;
             pairing[1]=want;
