@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
                 if(partners[i] == 0)
                     rem += 1;
             }
-            
+
             for(int j = 0; j < rem; j++){
                 MPI_Recv(pairing, 2, MPI_INT, MPI_ANY_SOURCE, sent, MPI_COMM_WORLD, &status);
                 obtained[j][0] = pairing[0];
@@ -87,7 +87,6 @@ int main(int argc, char **argv) {
                 rem == 0;
             }
 
-            int t = j;
             for(int j = 0; j < oldrem; j++)
                 MPI_Send(partners, numprocs, MPI_INT, obtained[j][0], sent + 1, MPI_COMM_WORLD);
             sent += 1;
