@@ -117,7 +117,10 @@ int main(int argc, char **argv) {
             if(p == 0)
                 pairing[1]=procid;
 
+            printf("id %d, preference %d\n", procid, pairing[1]);
+
             MPI_Send(pairing, 2, MPI_INT, 0, rec, MPI_COMM_WORLD);
+            printf("Got it!",procid);
             MPI_Recv(partners, numprocs, MPI_INT, 0, rec + 1, MPI_COMM_WORLD, &status);
 
             rec += 1;
