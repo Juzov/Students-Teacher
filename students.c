@@ -18,112 +18,112 @@ int main(int argc, char **argv) {
     
     srand((unsigned)time(NULL)*procid*numprocs);
     int pairing[2];
-    int partners[numprocs - 1];
+    int partners[numprocs];
     //How many time are we supposed to send
-    int sendamount = (numprocs - 1) / 2;
-    
-    //
-    //1 to n-1
-    //num procs = 5 -> children = 4 
-    //1 2 3 4
-    //num procs = 6 -> children = 5 
-    //1 2 3 4 5 -> sendamount = numprocs - 1 / 2 , 5 / 2 + 1
-
-    if((numprocs - 1) % 2 == 0)
+    int sendamount = (numprocs - 1 / 4);
+    if(numprocs - 1 % 4 != 0)
         sendamount += 1;
 
+    
+    /*
+    send amount = times children should send to teacher
+    retrieve amount = times children retrieves a message from teacher
+
+    numprocs = 5 -> c: 1234 -> 12; 34; sendback
+    -> retrieveamount 1; sendamount 1; -> Sendamount = 4(numprocs) / 4 = 1
+
+    numprocs = 6 -> c: 12345 -> 1234 sendback I'm alone send myself; retrieve; sendback
+    ->  retrieveamount 2; sendamount  2 -> Sendamount = 5(numprocs) / 4 = 2
+
+    numprocs = 8 -> c 1234567 -> 1234 send -> sendback -> 56 7 send -> sendback
+    ->  retrieveamount 2; sendamount  2 -> Sendamount = 7(numprocs) / 4 = 0
+
+    numprocs = 9 -> c 1234567 -> 1234 send -> sendback -> 56 78 send -> sendback
+
+    sendamount == retrieveamount
+    */
+
+    
     if (procid == 0) {
         printf("Sendamount %d\n", sendamount);
         //obtained from Recieved
-        int obtained[numprocs-1];
-       
-        for(int i = 0; i < sendamount - 1; i++){
-            //Recieve priority from all children
-            //Tags: 0->1->2...
-            for(int j = 0; j < numprocs - 1; j++){
-                MPI_Recv(&partner, 1, MPI_INT, MPI_ANY_SOURCE, i, MPI_COMM_WORLD, &status);
-                obtained[j]=partner;
-            }
-            printf("Recieved Done %d\n",i);
+        int obtained[numprocs-1][2];
+        int rem = 1;
+        int sent = 0;
+        while(rem != 0){
 
-            int pairing[2];
-            pairing[0]=obtained[0];
+            rem = 0;
+            for(int i = 1; i < numprocs; i++){
+                if(partners[i] == 0)
+                    rem += 1;
+            }
             
-            if((i == sendamount - 1) && (i % 2 != 0)){
-                pairing[1]=0;
-                printf("Hello %d,%d\n",i,sendamount);
+            for(int j = 0; j < rem; j++){
+                MPI_Recv(pairing, 2, MPI_INT, MPI_ANY_SOURCE, sent, MPI_COMM_WORLD, &status);
+                obtained[j]=pairing;
+            }
+
+            int oldrem = rem;
+
+            partners[obtained[0][0]] = obtained[0][1];
+            partners[obtained[0][1]] = obtained[0][0];
+            if(rem > 1){
+                if(
+                obtained[0][0] != (obtained[1][0])
+                && obtained[0][0] != (obtained[1][1]) 
+                && obtained[0][1] != (obtained[1][0])
+                && obtained[1][1] != (obtained[1][1])
+                )
+                {
+                        partners[obtained[1][0]] = obtained[1][1];
+                        partners[obtained[1][1]] = obtained[1][0];
+                        rem -= 2;
+                }
+                else
+                    rem -= 1;    
             }
             else{
-                int k = 1;
-                while((k <= numprocs-1)){
-                    if(pairing[0] != obtained[k]){
-                        pairing[1]=obtained[k];
-                        break;
-                    }
-                    k+=1;
-                }
+                rem == 0;
             }
-    
-            printf("Pair %d: %d, %d\n",i,pairing[0],pairing[1]);
 
-            for(int j = 1; j < numprocs; j++){
-                MPI_Send(pairing, 2, MPI_INT, j, i + 1, MPI_COMM_WORLD);
+            for(int i = 0 ; i < rem; i++){
+                MPI_Send(partners, numprocs, MPI_INT, MPI_ANY_SOURCE, sent + 1, MPI_COMM_WORLD);
             }
+            sent += 1;
         }
 
     }
     else {
         printf("\n");
         int preference[numprocs - 2];
-        int i = 0;
-        while(i < numprocs - 2){
-            int pref = rand() % (numprocs - 1) + 1;
-            while(pref == procid)
-                pref = rand() % (numprocs - 1) + 1;
-            int j = i;
-            while(j >= 0){
-                if(pref == preference[j]){
-                    pref = rand() % (numprocs - 1) + 1;
-                    while(pref == procid)
-                        pref = rand() % (numprocs - 1) + 1;
-                    j=i;
-                }
-                else
-                    j-=1;
-            }
-            preference[i] = pref;
-            printf("%d,",pref);
-            i+=1;
-        }
-        printf("\n");
+        
         
         int p = 0;
         //0 1 2 3
-        for(int c = 0; c < sendamount - 1; c++){      
-            //check if the preferred has been taken before?
-            while(preference[p] == 0)
-                p+=1;
+        while(partners[procid] == 0){      
             
-            printf("id %d, preference %d\n", procid, preference[p]);
-
-            //send the preferred
-            //send 1 recieve
-
-            MPI_Send(&preference[p], 1, MPI_INT, 0, c, MPI_COMM_WORLD);
-            MPI_Recv(pairing, 2, MPI_INT, 0, c + 1, MPI_COMM_WORLD, &status);
-
-            for(int m = 0; m < 2; m++){
-                for(int n = 0; n < numprocs - 2; n++){
-                    if(pairing[m] == preference[n])
-                        preference[n] = 0;
+            for(int m = 1; m < numprocs; m++){
+                if(partners[m] == 0 && procid != m){
+                    preference[p] == partners[m];
+                    p++;
                 }
             }
-        }
-    
+            
+            int want = preference[rand() % p];
 
-        
-        
+            pairing[0]=procid;
+            pairing[1]=want;
+            if(p == 0)
+                pairing[1]=procid;
+
+            MPI_Send(pairing, 2, MPI_INT, 0, i, MPI_COMM_WORLD);
+            MPI_Recv(partners, numprocs, MPI_INT, 0, i + 1, MPI_COMM_WORLD, &status);
+
+            p = 0;
+        }
     }
 
     MPI_Finalize();
+
+    printf("id %d, partner %d\n", procid, partners[procid]);
 }
