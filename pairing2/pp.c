@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
 
     time_t t;
-    int partners[numprocs], partner = -1, variables = numprocs - 1;
+    int partners[numprocs], partner = -1;
 
     srand(time(NULL) + procid);
 
