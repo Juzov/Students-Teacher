@@ -1,0 +1,8 @@
+This algorithm is centred around an array of integers.
+Partners are positoned in there partners positon.
+Teacher lets a random student start.
+student checks how many students haven't been chosen yet.
+if all have been chosen pick yourself.
+else make a random student your partners
+sendto another random student that doesn't have a partners
+else send to teacher.

@@ -1,0 +1,9 @@
+This algorithm is centred around an array of integers.
+The teacher recieves all students preferred pairiings.
+
+The first pairing will always be achieved.
+If the 2nd pairing has the one of the partners of pairing one send it back.The first pairing will always be achieved.
+loop these lines.
+
+Student obtains the array of integers. 
+Teacher recieves pairings from students.
